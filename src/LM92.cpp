@@ -33,14 +33,14 @@ double LM92::readTemp()
 
 	if (temp >= 8192)
 		temp -= 8192;
-	
+
 	t = temp * 0.0625;
 
 	if (!ResultInCelsius) t = t * 9.0 / 5.0 + 32.0;
 
 	return t;
 }
-unsigned int LM92::getManufacturerID() 
+unsigned int LM92::getManufacturerID()
 {
 	Wire.beginTransmission(I2C_ADDRESS);
 	Wire.write(ID_REG_PTR);
@@ -66,10 +66,10 @@ double LM92::readHysteresis()
 
 	int temp = readReg16() >> 3;
 	double t;
-	
+
 	if (temp >= 8192)
 		temp -= 8192;
-	
+
 	t = temp * 0.0625;
 
 	if (!ResultInCelsius) t = t * 9.0 / 5.0;
@@ -104,16 +104,16 @@ double LM92::readTCritical()
 	return readTemp();
 }
 
-void LM92::setHysteresis(double t) 
+void LM92::setHysteresis(double t)
 {
 	t /= 0.0625;
-	
+
 	if (!ResultInCelsius) t = t * 5.0 / 9.0;
 
 	int temp = (int) t << 3;
 	byte low = temp & 0xff;
 	byte high = (temp >> 8) & 0xff;
-	
+
 	//note, hysteresis can never be negative
 	Wire.beginTransmission(I2C_ADDRESS);
 	Wire.write(T_HYST_SET_REG_PTR);
@@ -125,14 +125,14 @@ void LM92::setHysteresis(double t)
 void LM92::setTHigh(double t)
 {
 	t /= 0.0625;
-	
+
 	if (!ResultInCelsius) t = t * 5.0 / 9.0;
 
 	int temp = (int) t << 3;
 
 	byte low = temp & 0xff;
 	byte high = (temp >> 8) & 0xff;
-	
+
 	Wire.beginTransmission(I2C_ADDRESS);
 	Wire.write(T_HIGH_SET_REG_PTR);
 	Wire.write(high);
@@ -143,14 +143,14 @@ void LM92::setTHigh(double t)
 void LM92::setTLow(double t)
 {
 	t /= 0.0625;
-	
+
 	if (!ResultInCelsius) t = t * 5.0 / 9.0;
 
 	int temp = (int) t << 3;
 
 	byte low = temp & 0xff;
 	byte high = (temp >> 8) & 0xff;
-	
+
 	Wire.beginTransmission(I2C_ADDRESS);
 	Wire.write(T_LOW_SET_REG_PTR);
 	Wire.write(high);
@@ -161,14 +161,14 @@ void LM92::setTLow(double t)
 void LM92::setTCritical(double t)
 {
 	t /= 0.0625;
-	
+
 	if (!ResultInCelsius) t = t * 5.0 / 9.0;
 
 	int temp = (int) t << 3;
 
 	byte low = temp & 0xff;
 	byte high = (temp >> 8) & 0xff;
-	
+
 	Wire.beginTransmission(I2C_ADDRESS);
 	Wire.write(T_CRIT_SET_REG_PTR);
 	Wire.write(high);
@@ -179,10 +179,10 @@ void LM92::setTCritical(double t)
 byte LM92::readReg8()
 {
     int temp;
-    
-    Wire.requestFrom(I2C_ADDRESS,2); 
 
-    if (Wire.available()) 
+    Wire.requestFrom(I2C_ADDRESS,2);
+
+    if (Wire.available())
     {
         temp = Wire.read();
     }
@@ -194,10 +194,10 @@ int LM92::readReg16()
 {
     byte low, high;
     int temp;
-    
-    Wire.requestFrom(I2C_ADDRESS,2); 
 
-    if (Wire.available()) 
+    Wire.requestFrom(I2C_ADDRESS,2);
+
+    if (Wire.available())
     {
         high = Wire.read();
         low = Wire.read();
@@ -218,19 +218,19 @@ void LM92::writeConfigReg(byte b)
 void LM92::shutDown(bool shutdown)
 {
 	byte b = readConfigurationRegister();
-	
+
 	if (shutdown)
 		b |= 0x1;
 	else
 		b &= ~0x1;
-	
+
 	writeConfigReg(b);
 }
 
 void LM92::enableFaultQueue(bool enable)
 {
 	byte b = readConfigurationRegister();
-	
+
 	if (enable)
 		b |= 0x10;
 	else
@@ -242,10 +242,10 @@ void LM92::enableFaultQueue(bool enable)
 void LM92::setINTMode(byte b)
 {
 	byte a = readConfigurationRegister();
-	
-	if (b == 0) 
+
+	if (b == 0)
 		a &= ~0x2;
-	else 
+	else
 		a |= 0x2;
 
 	writeConfigReg(a);
@@ -254,10 +254,10 @@ void LM92::setINTMode(byte b)
 void LM92::setTCriticalPolarity(byte b)
 {
 	byte a = readConfigurationRegister();
-	
-	if (b == 0) 
+
+	if (b == 0)
 		a &= ~0x4;
-	else 
+	else
 		a |= 0x4;
 
 	writeConfigReg(a);
@@ -266,10 +266,10 @@ void LM92::setTCriticalPolarity(byte b)
 void LM92::setINTPolarity(byte b)
 {
 	byte a = readConfigurationRegister();
-	
-	if (b == 0) 
+
+	if (b == 0)
 		a &= ~0x8;
-	else 
+	else
 		a |= 0x8;
 
 	writeConfigReg(a);
